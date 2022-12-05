@@ -20,7 +20,9 @@ class Djikstra():
         size = self.width * self.height
         
         self.adj_matrix = [[inf for i in range(size + 1)] for j in range(size + 1)]
+
         self.grid = self.fill_grid()
+        self.fill_adj_matrix()
         
 
         self.front = PriorityQueue()
@@ -130,25 +132,35 @@ class Djikstra():
 
         while not self.front.empty():
 
-
             # Getting the lowest cost node 
             lowest_cost_node = self.front.get()
             self.visited.append(lowest_cost_node[1])
 
-            print("low",lowest_cost_node)
-
-
             # Getting the lowest cost to_node
             lowest_cost_to_node = lowest_cost_node[1][1]   
-            print("vis", self.visited)
-
 
             # Stop when we hit goal 
             if lowest_cost_node[1][1] == dest:
                 print(self.visited)
+
+                # get path from source to dest in self.visited
+                path = []
+                path.append(dest)
+                current_node = dest
+
+                while current_node != source:
+                    for node in self.visited:
+                        if node[1] == current_node:
+                            current_node = node[2]
+                            path.append(current_node)
+                            break
+
+                path.reverse()
+                print(path)
+
                 break
 
-            # Get niighbours
+            # Get neighbours
             for i in range(len(self.adj_matrix[lowest_cost_to_node])):
                 
                 if self.adj_matrix[lowest_cost_to_node][i] != inf and self.adj_matrix[lowest_cost_to_node][i] != 0:
@@ -166,27 +178,26 @@ class Djikstra():
                             # Replace if the cost of edge in front is higher than the current edge we are checking
                             if cost < visited_node[0]:
                                 self.front.queue.remove(visited_node)
-                                self.queue.put((cost, check_node))
+                                self.front.put((cost, check_node))
 
                         else:
-                            cost = self.adj_matrix[lowest_cost_to_node][i] + lowest_cost_node[1][0]
+                            cost = self.adj_matrix[lowest_cost_to_node][i] + lowest_cost_node[1][0] 
                             add_edge = (cost, i, lowest_cost_to_node)
                             self.front.put((cost, add_edge))
                                 
-        
 
-
-            
 
         
 a = Djikstra(6)
 
-pp = pprint.PrettyPrinter()
-#
-a.fill_adj_matrix()
-a.set_obstacle(6)
-a.set_obstacle(4)
-a.set_obstacle(9)
-a.djikstra(24,3)
+a.set_obstacle(2)
+a.set_obstacle(10)
+a.set_obstacle(11)
+a.set_obstacle(20)
+a.set_obstacle(21)
+a.set_obstacle(27)
+a.set_obstacle(33)
+
+a.djikstra(32,5)
 
 
